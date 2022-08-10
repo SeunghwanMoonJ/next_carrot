@@ -1,8 +1,12 @@
 import type { NextPage } from "next";
 import Router from "next/router";
+import { useState } from "react";
 import Layout from "../../component/layout";
+import { motion } from "framer-motion";
 
 const Profile: NextPage = () => {
+  const [showingPopUp, setShowingPopUp] = useState(false);
+
   const onClickEditProfile = () => {
     Router.push(`/profiles/edit/`);
   };
@@ -15,6 +19,13 @@ const Profile: NextPage = () => {
   const onClickLovedListButton = () => {
     Router.push(`/profiles/loved`);
   };
+  const onClickPopUpbutton = () => {
+    setShowingPopUp(true);
+  };
+  const setShowingPopUpFalse = () => {
+    setShowingPopUp(false);
+  };
+
   return (
     <Layout title="프로필" hasTabBar>
       <div className="px-4">
@@ -162,6 +173,34 @@ const Profile: NextPage = () => {
               Besides, I&apos;ve already been through too much shit this morning
               over this case to hand it over to your dumb ass.
             </p>
+
+            <button
+              onClick={onClickPopUpbutton}
+              className="p-4 bg-orange-700 rounded-md text-white"
+            >
+              Test Button
+            </button>
+            {showingPopUp ? (
+              <div
+                onClick={setShowingPopUpFalse}
+                className="w-full h-full top-0 fixed bg-transparent z-10 cursor-pointer"
+              >
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  exit={{ scale: 0 }}
+                  className="shadow-lg p-5 fixed overflow-auto z-20 top-20 opacity-100 left-0 right-0 mx-auto h-2/3 w-2/3 bg-orange-300 text-9xl"
+                >
+                  <button
+                    onClick={() => alert("fjfjf")}
+                    className="p-4 bg-orange-600 rounded-md z-50"
+                  >
+                    asdf
+                  </button>
+                  🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻
+                </motion.div>
+              </div>
+            ) : null}
           </div>
         </div>
       </div>
