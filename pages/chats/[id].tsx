@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
-import FloatingInput from "../../component/floating-input";
-import Layout from "../../component/layout";
-import Message from "../../component/message";
+import FloatingInput from "@components/floating-input";
+import Layout from "@components/layout";
+import Message from "@components/message";
 
 const ChatDetail: NextPage = () => {
   return (

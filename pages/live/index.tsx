@@ -1,8 +1,8 @@
 import { NextPage } from "next";
 import Router from "next/router";
-import FloatingButton from "../../component/floating-button";
-import Layout from "../../component/layout";
-import LiveIndex from "../../component/live-index";
+import FloatingButton from "@components/floating-button";
+import Layout from "@components/layout";
+import LiveIndex from "@components/live-index";
 
 const Live: NextPage = () => {
   const onClickStreamRoom = (id: number) => {

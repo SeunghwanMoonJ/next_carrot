@@ -2,20 +2,39 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  // MySQL 등 일반적인 DB는 forign-key 참조를 할때, 해당 키가 없으면 에러가 발생하나
+  // vitess는 특성상 에러가 발생하지 않음.
+  // 그래서 아래 prisma 기능인 referentialIntegrity로 DB 객체간 참조를 할때 해당 값이 있는지 확인.
+  // 아래 datasource db 에도   referentialIntegrity = "prisma" 작성.
+  previewFeatures = ["referentialIntegrity"]
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
 }
 
-model user {
+model User {
   id        Int      @id @default(autoincrement())
-  phone     Int      @unique
-  email     String   @unique
+  phone     String?  @unique
+  email     String?  @unique
   name      String
   avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tokens    Token[]
+}
+
+// 모델 추가 후 서버 재시작해야 client가 업데이트 된다
+model Token {
+  id        Int      @id @default(autoincrement())
+  payload   String   @unique
+  // User와 Token의 관계를 나타내는 @relation 필드에 저장되지 않는다
+  // onDelete : User가 삭제되었을때 Token을 어떻게 처리할지 결정한다. Cascade : 같이 삭제, setNull : 유저만 삭제
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

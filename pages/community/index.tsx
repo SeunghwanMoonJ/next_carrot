@@ -1,8 +1,8 @@
 import type { NextPage } from "next";
 import Router from "next/router";
-import CommunityIndex from "../../component/community-index";
-import FloatingButton from "../../component/floating-button";
-import Layout from "../../component/layout";
+import CommunityIndex from "@components/community-index";
+import FloatingButton from "@components/floating-button";
+import Layout from "@components/layout";
 
 const Community: NextPage = () => {
   const onClickQuestion = (id: number) => {

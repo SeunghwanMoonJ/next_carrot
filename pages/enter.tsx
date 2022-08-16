@@ -1,82 +1,159 @@
-import { useState } from "react";
-import { cls } from "../libs/utils";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import Input from "@components/input";
+import useMutation from "@libs/client/useMutation";
+import { cls } from "@libs/client/utils";
+import { useRouter } from "next/router";
+
+interface EnterForm {
+  email?: string;
+  phone?: string;
+}
+interface TokenForm {
+  token: string;
+}
+interface MutationResult {
+  ok: boolean;
+}
 
 export default function Enter() {
+  // DB를 mutate하는 hook 작성
+  const [enter, { loading, data, error }] =
+    useMutation<MutationResult>("/api/users/enter");
+  // 위 mutate hook을 토큰 검증을 위해 api url만 바꿔서 재사용
+  const [confirmToken, { loading: tokenLoading, data: tokenData }] =
+    useMutation<MutationResult>("/api/users/confirm");
+  const { register, handleSubmit, reset } = useForm<EnterForm>();
+  const { register: tokenRegister, handleSubmit: tokenHandleSubmit } =
+    useForm<TokenForm>();
   const [method, setMethod] = useState<"email" | "phone">("email");
-  const onEmailClick = () => setMethod("email");
-  const onPhoneClick = () => setMethod("phone");
+
+  const onEmailClick = () => {
+    reset();
+    setMethod("email");
+  };
+  const onPhoneClick = () => {
+    reset();
+    setMethod("phone");
+  };
+  const onValid = (validForm: EnterForm) => {
+    if (loading) return;
+    enter(validForm);
+  };
+  const onTokenValid = (tokenValidForm: TokenForm) => {
+    if (tokenLoading) return;
+    confirmToken(tokenValidForm);
+  };
+  // 토큰이 존재하면 로그인 처리
+  const router = useRouter();
+  useEffect(() => {
+    if (tokenData?.ok) {
+      router.push("/");
+    }
+  }, [tokenData, router]);
 
   return (
     <div className="p-2">
       <h3 className="text-3xl text-center">Enter to Carrot</h3>
       <div>
-        <div className="mt-10 flex flex-col items-center">
-          <h5 className="mt-10 text-gray-600">Enter using :</h5>
-          <div className="mt-10 text-md grid grid-cols-2 w-screen">
-            <button
-              className={cls(
-                "p-2 border-b",
-                method === "email" ? "border-b border-b-orange-500" : ""
-              )}
-              onClick={onEmailClick}
-            >
-              Email
-            </button>
-            <button
-              // jsx에서 {``} 지저분하게 남발하는 것을 막기 위해 유틸 함수 사용
-              // const cls = (...classes: string[]) => classes.join(" ");
-              className={cls(
-                "p-2 border-b",
-                method === "phone" ? "border-b border-b-orange-500" : ""
-              )}
-              onClick={onPhoneClick}
-            >
-              Phone
-            </button>
-          </div>
-        </div>
-        <form className="mt-10 flex flex-col text-center">
-          <label htmlFor="input" className="text-sm text-gray-600">
-            {method === "email" ? "Email address" : null}
-            {method === "phone" ? "Phone number" : null}
-          </label>
-          <div>
-            {method === "email" ? (
-              <input
-                id="input"
-                type="email"
-                className="appearance-none border-gray-300 border rounded-xl shadow-sm w-full
-                 focus:ring-1 focus:border-orange-500 focus:ring-orange-500"
+        {data?.ok ? (
+          <form
+            // useForm의 handleSubmit으로 submit시 request 새로고침이 되지 않게 처리
+            onSubmit={tokenHandleSubmit(onTokenValid)}
+            className="mt-10 flex flex-col text-center"
+          >
+            <div>
+              <Input
+                resister={tokenRegister("token", { required: true })}
+                name="token"
+                label="Confirmation Token"
+                kind="text"
+                type="number"
                 required
               />
-            ) : null}
-            {method === "phone" ? (
-              <div className="flex">
-                <span
-                  className="flex items-center justify-center px-3 border border-gray-300
-                rounded-l-md rounded-r-0 border-r-0 shadow-sm text-gray-500 text-md"
+            </div>
+            <button
+              className="border border-transparent
+                 bg-orange-500 hover:bg-orange-600 rounded-md p-2 mt-4
+                 shadow-md focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 focus:outline-none"
+            >
+              {tokenLoading ? "Token Loading.." : "Confirm Token"}
+            </button>
+          </form>
+        ) : (
+          <>
+            <div className="mt-10 flex flex-col items-center">
+              <h5 className="mt-10 text-gray-600">Enter using :</h5>
+              <div className="mt-10 text-md grid grid-cols-2 w-screen">
+                <button
+                  className={cls(
+                    "p-2 border-b",
+                    method === "email" ? "border-b border-b-orange-500" : ""
+                  )}
+                  onClick={onEmailClick}
                 >
-                  +82
-                </span>
-                <input
-                  id="input"
-                  type="number"
-                  className="appearance-none  border-gray-300 border rounded-r-xl shadow-sm w-full
-                   focus:outline-none focus:ring-orange-500 focus:border-orange-500"
-                  required
-                />
+                  Email
+                </button>
+                <button
+                  // jsx에서 {``} 지저분하게 남발하는 것을 막기 위해 유틸 함수 사용
+                  // const cls = (...classes: string[]) => classes.join(" ");
+                  className={cls(
+                    "p-2 border-b",
+                    method === "phone" ? "border-b border-b-orange-500" : ""
+                  )}
+                  onClick={onPhoneClick}
+                >
+                  Phone
+                </button>
               </div>
-            ) : null}
-          </div>
-          <button
-            className="border border-transparent
+            </div>
+            <form
+              // useForm의 handleSubmit으로 submit시 request 새로고침이 되지 않게 처리
+              onSubmit={handleSubmit(onValid)}
+              className="mt-10 flex flex-col text-center"
+            >
+              <div>
+                {method === "email" ? (
+                  <Input
+                    resister={register("email", { required: true })}
+                    name="email"
+                    label="email"
+                    required
+                    type="email"
+                    kind="email"
+                  />
+                ) : null}
+                {method === "phone" ? (
+                  <Input
+                    resister={register("phone", { required: true })}
+                    name="phone"
+                    label="Phone number"
+                    kind="phone"
+                    type="number"
+                    required
+                  />
+                ) : null}
+              </div>
+              <button
+                className="border border-transparent
            bg-orange-500 hover:bg-orange-600 rounded-md p-2 mt-4
            shadow-md focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 focus:outline-none"
-          >
-            {method === "email" ? "Get login link" : null}
-            {method === "phone" ? "Get one-time password" : null}
-          </button>
-        </form>
+              >
+                {method === "email"
+                  ? loading
+                    ? "Loading.."
+                    : "Get login link"
+                  : null}
+                {method === "phone"
+                  ? loading
+                    ? "Loading.."
+                    : "Get one-time password"
+                  : null}
+              </button>
+            </form>
+          </>
+        )}
+
         <div>
           <div className="relative mt-5">
             <div className="absolute border-t border-t-gray-200 w-full" />

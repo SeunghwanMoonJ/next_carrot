@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import Router from "next/router";
 import { useState } from "react";
-import Layout from "../../component/layout";
+import Layout from "@components/layout";
 import { motion } from "framer-motion";
 
 const Profile: NextPage = () => {
@@ -195,7 +195,7 @@ const Profile: NextPage = () => {
                     onClick={() => alert("fjfjf")}
                     className="p-4 bg-orange-600 rounded-md z-50"
                   >
-                    asdf
+                    Test!
                   </button>
                   🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻🙏🏻
                 </motion.div>

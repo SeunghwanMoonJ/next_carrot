@@ -1,14 +1,12 @@
 import type { NextPage } from "next";
-import { useRouter } from "next/router";
-import FloatingButton from "../component/floating-button";
-import Item from "../component/Item";
-import Layout from "../component/layout";
+import FloatingButton from "@components/floating-button";
+import Item from "@components/Item";
+import Layout from "@components/layout";
+import useUser from "@libs/client/useUser";
 
 const Home: NextPage = () => {
-  const Router = useRouter();
-  const onClickItem = (id: number) => {
-    Router.push(`/items/${id}`);
-  };
+  const { user, isLoading } = useUser();
+  console.log(user);
 
   return (
     <Layout title="Home" hasTabBar={true}>

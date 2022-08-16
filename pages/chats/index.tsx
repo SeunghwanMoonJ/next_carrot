@@ -1,6 +1,6 @@
 import { NextPage } from "next";
-import ChatIndex from "../../component/chat-Index";
-import Layout from "../../component/layout";
+import ChatIndex from "@components/chat-Index";
+import Layout from "@components/layout";
 
 const Chats: NextPage = () => {
   return (
